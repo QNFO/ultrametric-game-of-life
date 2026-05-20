@@ -1,111 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultrametric Tree — Game of Life</title>
-    <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Virtual Qubit Showdown — Ultrametric Tree vs Surface Code</title>
+<link rel="stylesheet" href="css/showdown.css">
 </head>
 <body>
-    <div id="app">
-        <!-- Header -->
-        <header>
-            <h1>🌳 Ultrametric Tree Game of Life</h1>
-            <p class="subtitle">Interactive Bruhat–Tits Tree Cellular Automaton — based on <em>Ultrametric Quantum Computing</em> research</p>
-        </header>
+<div id="app">
 
-        <!-- Main Layout -->
-        <div id="main-container">
-            <!-- Sidebar Controls -->
-            <aside id="controls">
-                <!-- Tree Parameters -->
-                <section class="control-group">
-                    <h3>🌲 Tree Parameters</h3>
-                    <label>
-                        Prime <em>p</em>
-                        <div class="input-row">
-                            <input type="range" id="prime-slider" min="2" max="7" value="2" step="1">
-                            <span id="prime-value">2</span>
-                        </div>
-                    </label>
-                    <label>
-                        Depth <em>d</em>
-                        <div class="input-row">
-                            <input type="range" id="depth-slider" min="1" max="5" value="3" step="1">
-                            <span id="depth-value">3</span>
-                        </div>
-                    </label>
-                    <div class="tree-stats" id="tree-stats">
-                        <span>Nodes: <strong id="stat-nodes">—</strong></span>
-                        <span>Leaves: <strong id="stat-leaves">—</strong></span>
-                    </div>
-                </section>
+<!-- HEADER -->
+<header>
+    <div class="header-left">
+        <h1>⚛️ Virtual Qubit Showdown</h1>
+        <p class="subtitle">Ultrametric Tree Encoding vs Surface Code — Interactive Error Confinement Demonstration</p>
+    </div>
+    <div class="header-right">
+        <span class="badge">Based on: UQC Foundations · Validation of Ultrametric Error Confinement</span>
+    </div>
+</header>
 
-                <!-- Game Controls -->
-                <section class="control-group">
-                    <h3>🎮 Game Controls</h3>
-                    <div class="mode-selector">
-                        <button class="mode-btn active" data-mode="interact">🖱️ Interact</button>
-                        <button class="mode-btn" data-mode="gol">🧬 Game of Life</button>
-                        <button class="mode-btn" data-mode="noise">🎲 Noise Lab</button>
-                    </div>
-                    <div id="mode-panel">
-                        <!-- Dynamic content based on mode -->
-                    </div>
-                </section>
+<!-- MAIN LAYOUT: Controls | Tree Panel | Center Divider | Grid Panel -->
+<div id="main-layout">
 
-                <!-- Actions -->
-                <section class="control-group">
-                    <h3>⚡ Actions</h3>
-                    <button id="btn-randomize" class="action-btn">🎲 Randomize Leaves</button>
-                    <button id="btn-propagate" class="action-btn">⬆️ Propagate Up</button>
-                    <button id="btn-reset" class="action-btn">🔄 Reset All</button>
-                    <button id="btn-step" class="action-btn pulse">▶️ Single Step</button>
-                </section>
+    <!-- SIDEBAR CONTROLS -->
+    <aside id="sidebar">
+        <!-- Mode Selector -->
+        <section class="panel">
+            <h3>🎮 Mode</h3>
+            <div class="mode-tabs">
+                <button class="mode-btn active" data-mode="interact">🔬 Interact</button>
+                <button class="mode-btn" data-mode="trial">🧪 Single Trial</button>
+                <button class="mode-btn" data-mode="experiment">📊 Run Experiment</button>
+            </div>
+        </section>
 
-                <!-- Legend -->
-                <section class="control-group">
-                    <h3>📊 Legend</h3>
-                    <div class="legend">
-                        <div class="legend-item"><span class="swatch alive"></span> Alive (1)</div>
-                        <div class="legend-item"><span class="swatch dead"></span> Dead (0)</div>
-                        <div class="legend-item"><span class="swatch tie"></span> Tie / Mixed</div>
-                        <div class="legend-item"><span class="swatch selected"></span> Selected</div>
-                    </div>
-                </section>
-
-                <!-- Info Panel -->
-                <section class="control-group" id="info-panel">
-                    <h3>ℹ️ Selected Node</h3>
-                    <div id="node-info">Click a node to inspect</div>
-                </section>
-            </aside>
-
-            <!-- Tree Visualization -->
-            <main id="viz-container">
-                <svg id="tree-svg"></svg>
-                <div id="viz-overlay">
-                    <div id="distance-display" class="hidden"></div>
+        <!-- Parameters -->
+        <section class="panel">
+            <h3>⚙️ Parameters</h3>
+            <div class="param-row">
+                <label>Tree Prime <em>p</em></label>
+                <div class="slider-row">
+                    <input type="range" id="param-p" min="2" max="7" value="2" step="1">
+                    <span id="val-p">2</span>
                 </div>
-                <!-- Generation counter -->
-                <div id="gen-counter">Generation <span id="gen-num">0</span></div>
-            </main>
-        </div>
+            </div>
+            <div class="param-row">
+                <label>Tree Depth <em>d</em></label>
+                <div class="slider-row">
+                    <input type="range" id="param-d" min="1" max="5" value="3" step="1">
+                    <span id="val-d">3</span>
+                </div>
+            </div>
+            <div class="param-row">
+                <label>Error Rate <em>p<sub>err</sub></em></label>
+                <div class="slider-row">
+                    <input type="range" id="param-err" min="1" max="50" value="15" step="1">
+                    <span id="val-err">0.15</span>
+                </div>
+            </div>
+            <div class="param-row" id="trials-row" style="display:none">
+                <label>Trials</label>
+                <input type="number" id="param-trials" value="100" min="10" max="5000" step="10">
+            </div>
+            <div class="stats-mini">
+                <div>Physical Qubits: <strong id="stat-phys">—</strong></div>
+                <div>Virtual Qubits: <strong id="stat-virt">—</strong></div>
+                <div>Energy Barrier: <strong id="stat-barrier">—</strong></div>
+            </div>
+        </section>
 
-        <!-- Footer -->
-        <footer>
-            <p>Based on <a href="https://doi.org/10.5281/zenodo.20154557" target="_blank">Ultrametric Quantum Computing Foundations</a>
-            & <a href="https://doi.org/10.5281/zenodo.20134944" target="_blank">Validation of Ultrametric Error Confinement</a>
-            · <a href="https://github.com/QNFO/ultrametric-error-confinement" target="_blank">QNFO/ultrametric-error-confinement</a></p>
-        </footer>
+        <!-- Actions -->
+        <section class="panel">
+            <h3>⚡ Actions</h3>
+            <button id="btn-encode" class="act-btn">🔐 Encode Logical |0⟩</button>
+            <button id="btn-noise" class="act-btn warn">💥 Inject Noise</button>
+            <button id="btn-decode" class="act-btn primary">🔓 Decode & Compare</button>
+            <button id="btn-trial" class="act-btn accent">🧪 Run Single Trial</button>
+            <button id="btn-experiment" class="act-btn accent2" style="display:none">📊 Run N Trials</button>
+            <button id="btn-reset" class="act-btn dim">🔄 Reset</button>
+        </section>
+
+        <!-- Live Results -->
+        <section class="panel" id="results-panel">
+            <h3>📈 Results</h3>
+            <div id="results-content">
+                <span class="dim-text">Run a trial to see results</span>
+            </div>
+        </section>
+
+        <!-- Legend -->
+        <section class="panel">
+            <h3>📋 Legend</h3>
+            <div class="legend">
+                <div class="leg-item"><span class="dot" style="background:#10b981"></span> Logical |1⟩ (alive)</div>
+                <div class="leg-item"><span class="dot" style="background:#1e293b"></span> Logical |0⟩ (dead)</div>
+                <div class="leg-item"><span class="dot" style="background:#ef4444"></span> Error (flipped)</div>
+                <div class="leg-item"><span class="dot" style="background:#22d3ee"></span> Propagation</div>
+            </div>
+        </section>
+    </aside>
+
+    <!-- TREE PANEL (LEFT) -->
+    <div class="viz-panel" id="tree-panel">
+        <div class="panel-header">
+            <span class="panel-icon">🌳</span>
+            <h2>Ultrametric Tree Encoding</h2>
+            <span class="panel-badge">Bruhat–Tits Tree T<sub>p</sub></span>
+        </div>
+        <svg id="tree-svg"></svg>
+        <div class="panel-footer" id="tree-footer">
+            Logical Qubit (Root): <span id="tree-logical">—</span>
+        </div>
     </div>
 
-    <!-- D3.js -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <!-- App Scripts -->
-    <script src="js/tree.js"></script>
-    <script src="js/game.js"></script>
-    <script src="js/viz.js"></script>
-    <script src="js/main.js"></script>
+    <!-- CENTER DIVIDER -->
+    <div class="center-divider">
+        <div class="divider-content">
+            <div class="vs-badge">VS</div>
+            <div id="flash-msg" class="flash-msg"></div>
+            <div id="comparison-stats" class="comp-stats">
+                <div class="comp-row">
+                    <span>Tree LER:</span>
+                    <span id="comp-tree-ler">—</span>
+                </div>
+                <div class="comp-row">
+                    <span>Grid LER:</span>
+                    <span id="comp-grid-ler">—</span>
+                </div>
+                <div class="comp-row highlight">
+                    <span>Advantage:</span>
+                    <span id="comp-advantage">—</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRID PANEL (RIGHT) -->
+    <div class="viz-panel" id="grid-panel">
+        <div class="panel-header">
+            <span class="panel-icon">🔲</span>
+            <h2>Surface Code Grid</h2>
+            <span class="panel-badge">2D Euclidean Lattice</span>
+        </div>
+        <svg id="grid-svg"></svg>
+        <div class="panel-footer" id="grid-footer">
+            Logical Qubit (Majority): <span id="grid-logical">—</span>
+        </div>
+    </div>
+
+</div><!-- /main-layout -->
+
+<!-- FOOTER -->
+<footer>
+    <p>
+        Based on research: DOI <a href="https://doi.org/10.5281/zenodo.20154557" target="_blank">10.5281/zenodo.20154557</a>
+        & <a href="https://doi.org/10.5281/zenodo.20134944" target="_blank">10.5281/zenodo.20134944</a>
+        · Code: <a href="https://github.com/QNFO/ultrametric-error-confinement" target="_blank">QNFO/ultrametric-error-confinement</a>
+        · <strong>Fact-checked against published experimental data.</strong>
+    </p>
+</footer>
+
+</div><!-- /app -->
+
+<!-- D3.js CDN -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<!-- App -->
+<script src="js/virtual-qubit-engine.js"></script>
+<script src="js/dual-viz.js"></script>
+<script src="js/showdown-main.js"></script>
 </body>
 </html>
