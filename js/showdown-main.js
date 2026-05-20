@@ -137,12 +137,12 @@
     function doSingleTrial() {
         const errRate = getErrRate();
         doEncode();
-        // Use seeded RNG for reproducibility
+        // Use seeded RNG for reproducibility (LCG: Numerical Recipes)
         const rngSeedVal = rngSeed++;
-        // Simple deterministic RNG based on seed
+        let rngState = rngSeedVal;
         const rng = () => {
-            let s = rngSeedVal * 1664525 + 1013904223;
-            return (s >>> 0) / 4294967296;
+            rngState = (rngState * 1664525 + 1013904223) | 0;
+            return (rngState >>> 0) / 4294967296;
         };
 
         const treeResult = tree.runTrial(logicalValue, errRate, rng);
@@ -176,9 +176,11 @@
             const batch = Math.min(BATCH_SIZE, remaining);
 
             for (let i = 0; i < batch; i++) {
+                const rngSeedVal = rngSeed++;
+                let rngState = rngSeedVal;
                 const rng = () => {
-                    let s = (rngSeed++) * 1664525 + 1013904223;
-                    return (s >>> 0) / 4294967296;
+                    rngState = (rngState * 1664525 + 1013904223) | 0;
+                    return (rngState >>> 0) / 4294967296;
                 };
 
                 // Flip logical value randomly for each trial
