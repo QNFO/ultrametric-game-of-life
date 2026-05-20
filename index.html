@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultrametric Tree — Game of Life</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header>
+            <h1>🌳 Ultrametric Tree Game of Life</h1>
+            <p class="subtitle">Interactive Bruhat–Tits Tree Cellular Automaton — based on <em>Ultrametric Quantum Computing</em> research</p>
+        </header>
+
+        <!-- Main Layout -->
+        <div id="main-container">
+            <!-- Sidebar Controls -->
+            <aside id="controls">
+                <!-- Tree Parameters -->
+                <section class="control-group">
+                    <h3>🌲 Tree Parameters</h3>
+                    <label>
+                        Prime <em>p</em>
+                        <div class="input-row">
+                            <input type="range" id="prime-slider" min="2" max="7" value="2" step="1">
+                            <span id="prime-value">2</span>
+                        </div>
+                    </label>
+                    <label>
+                        Depth <em>d</em>
+                        <div class="input-row">
+                            <input type="range" id="depth-slider" min="1" max="5" value="3" step="1">
+                            <span id="depth-value">3</span>
+                        </div>
+                    </label>
+                    <div class="tree-stats" id="tree-stats">
+                        <span>Nodes: <strong id="stat-nodes">—</strong></span>
+                        <span>Leaves: <strong id="stat-leaves">—</strong></span>
+                    </div>
+                </section>
+
+                <!-- Game Controls -->
+                <section class="control-group">
+                    <h3>🎮 Game Controls</h3>
+                    <div class="mode-selector">
+                        <button class="mode-btn active" data-mode="interact">🖱️ Interact</button>
+                        <button class="mode-btn" data-mode="gol">🧬 Game of Life</button>
+                        <button class="mode-btn" data-mode="noise">🎲 Noise Lab</button>
+                    </div>
+                    <div id="mode-panel">
+                        <!-- Dynamic content based on mode -->
+                    </div>
+                </section>
+
+                <!-- Actions -->
+                <section class="control-group">
+                    <h3>⚡ Actions</h3>
+                    <button id="btn-randomize" class="action-btn">🎲 Randomize Leaves</button>
+                    <button id="btn-propagate" class="action-btn">⬆️ Propagate Up</button>
+                    <button id="btn-reset" class="action-btn">🔄 Reset All</button>
+                    <button id="btn-step" class="action-btn pulse">▶️ Single Step</button>
+                </section>
+
+                <!-- Legend -->
+                <section class="control-group">
+                    <h3>📊 Legend</h3>
+                    <div class="legend">
+                        <div class="legend-item"><span class="swatch alive"></span> Alive (1)</div>
+                        <div class="legend-item"><span class="swatch dead"></span> Dead (0)</div>
+                        <div class="legend-item"><span class="swatch tie"></span> Tie / Mixed</div>
+                        <div class="legend-item"><span class="swatch selected"></span> Selected</div>
+                    </div>
+                </section>
+
+                <!-- Info Panel -->
+                <section class="control-group" id="info-panel">
+                    <h3>ℹ️ Selected Node</h3>
+                    <div id="node-info">Click a node to inspect</div>
+                </section>
+            </aside>
+
+            <!-- Tree Visualization -->
+            <main id="viz-container">
+                <svg id="tree-svg"></svg>
+                <div id="viz-overlay">
+                    <div id="distance-display" class="hidden"></div>
+                </div>
+                <!-- Generation counter -->
+                <div id="gen-counter">Generation <span id="gen-num">0</span></div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>Based on <a href="https://doi.org/10.5281/zenodo.20154557" target="_blank">Ultrametric Quantum Computing Foundations</a>
+            & <a href="https://doi.org/10.5281/zenodo.20134944" target="_blank">Validation of Ultrametric Error Confinement</a>
+            · <a href="https://github.com/QNFO/ultrametric-error-confinement" target="_blank">QNFO/ultrametric-error-confinement</a></p>
+        </footer>
+    </div>
+
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- App Scripts -->
+    <script src="js/tree.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/viz.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
