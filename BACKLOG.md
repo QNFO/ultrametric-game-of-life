@@ -1,13 +1,22 @@
-# Ultrametric Game of Life — BACKLOG
+# BACKLOG — Ultrametric Tree Game of Life
 
-**Last updated:** 2026-05-20
+## P1 (High Priority)
+- [ ] Test all features locally before deployment
+- [ ] Create GitHub repository under QNFO organization
+- [ ] Deploy to GitHub Pages (qnfo.github.io/ultrametric-game-of-life)
+- [ ] Add ultrametricity index display (live computation on current tree)
 
-| Priority | Item | Description | Status |
-|:---------|:-----|:------------|:-------|
-| P0 | Neighbor rule design | Define ultrametric analog of Moore neighborhood | ⬜ |
-| P1 | Transition rule adaptation | Adapt B3/S23 to tree topology | ⬜ |
-| P2 | Tree grid construction | Ternary Bruhat-Tits tree with state storage | ⬜ |
-| P3 | Simulation engine | Step-by-step synchronous evolution | ⬜ |
-| P4 | Visualization | Text-based or graphical tree state rendering | ⬜ |
-| P5 | Pattern classification | Dead/stable/oscillating/glider/chaotic taxonomy | ⬜ |
-| P6 | Euclidean baseline | Standard Game of Life for comparison | ⬜ |
+## P2 (Medium Priority)
+- [ ] Energy barrier visualization (show minimum flips needed to flip root)
+- [ ] Flat vs. Ultrametric comparison mode (side-by-side error propagation)
+- [ ] Export/import tree state (JSON serialization)
+- [ ] Pattern library (predefined starting configurations)
+- [ ] Animation of propagation step-by-step
+
+## P3 (Nice to Have)
+- [ ] Mobile touch support improvements
+- [ ] Color-blind accessible palette option
+- [ ] History scrubber (replay past generations)
+- [ ] Share tree state via URL hash
+- [ ] Multi-prime comparison (p=2,3,5,7 side by side)
+- [ ] Tutorial / guided tour overlay

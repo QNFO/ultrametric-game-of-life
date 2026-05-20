@@ -1,0 +1,18 @@
+# Ultrametric Tree Game of Life
+# Dependencies are loaded from CDN — no node_modules needed
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temp files
+*.tmp
+*.log
