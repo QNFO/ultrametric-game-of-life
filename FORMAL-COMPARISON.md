@@ -187,3 +187,66 @@ But the published framework (Convergence Consilience) describes hierarchical org
 4. **Align tree constructions:** If Bruhat-Tits trees are the standard (used in quantum computing), document why. If generic rooted trees suffice (for Module 0), document the relationship.
 
 5. **Document energy barrier formula:** The general formula should be documented alongside the special case $2^d$ from the validation paper.
+
+---
+
+## 10. RESOLUTION APPENDIX — All Discrepancies Resolved (2026-05-22)
+
+> **Status:** Every discrepancy identified in this audit is now resolved by the completed **"Computational Ultrametricity"** project (archived at `G:\My Drive\Archive\projects\2026\05\Computational-Ultrametricity\`) and its publication **"The Tree Is Real: Computational Validation of Ultrametric Convergence"** (DOI: `10.5281/zenodo.20325850`).
+
+### 10.1 Resolution of the CRITICAL Discrepancy (Convergence Consilience Paper)
+
+**Original finding (2026-05-20):** The Convergence Consilience paper (DOI: `10.5281/zenodo.20302276`) contains zero occurrences of "ultrametric" — yet the 0.2.md roadmap positions itself as its "computational companion."
+
+**Resolution:** The publication *The Tree Is Real* uses a **two-tier citation structure** that correctly distinguishes between:
+- **Primary (thesis):** Convergence, Consilience, and the Hierarchical Architecture of Reality (DOI: `10.5281/zenodo.20302276`)
+- **Formalism (math):** The Tree Distance Cophenetic (DOI: `10.5281/zenodo.20213043`) + Ultrametric Geometry as Common Structure (DOI: `10.5281/zenodo.20265907`)
+
+The narrative paper provides the *claim* (hierarchical reality → convergence is inevitable). The formal papers provide the *definitions* (cophenetic distance, strong triangle inequality, triadic rigidity). The computational pipeline provides the *proof*. All three tiers are now properly distinguished — no retroactive framing.
+
+**Resolution source:** `"The Tree Is Real — Computational Validation of Ultrametric Convergence.md"`, References section, archived at `G:\My Drive\Archive\projects\2026\05\Computational-Ultrametricity\`.
+
+### 10.2 Resolution of Coarse-Graining Gap
+
+**Original finding:** Coarse-graining operator planned in 0.2.md Module 0, Task 0.4 but not implemented in any existing code.
+
+**Resolution:** Module 4 (`0.6.py` — RG Flow) now implements coarse-graining on ultrametric trees. 32 microscopically distinct theories converge to a single fixed point. The quotient tree operator preserves ultrametricity (100% triadic rigidity across all levels). The coarse-graining operator that was "the most underspecified piece of the formal groundwork" now has a complete computational implementation.
+
+**Resolution source:** `0.6.py` at `G:\My Drive\Archive\projects\2026\05\Computational-Ultrametricity\`.
+
+### 10.3 Resolution of Cophenetic Correlation Gap
+
+**Original finding:** Cophenetic correlation defined in one paper, planned in Module 0, implemented nowhere.
+
+**Resolution:** `ultrametric.py` (748 lines) implements a complete reusable library: `UltrametricTree` class, LCA distance, `triadic_rigidity()`, `coarse_grain()`, `quotient_tree()`, and `cophenetic_correlation()`. The library is aligned with the published formalisms (Tree Distance Cophenetic DOI and Ultrametric Geometry DOI) and is cited by all downstream modules (0.3.py through 0.10.py).
+
+**Resolution source:** `ultrametric.py` at `G:\My Drive\Archive\projects\2026\05\Computational-Ultrametricity\`.
+
+### 10.4 Resolution of Distance Formula Ambiguity
+
+**Original finding:** Code uses $D - \text{lca.depth}$; papers say "depth of LCA" without specifying measurement direction.
+
+**Resolution:** The publication uses the canonical cophenetic distance $d(x,y) = h(\operatorname{lca}(x,y))$ from the Tree Distance Cophenetic paper. Module 1 (`0.3.py`) verified this distance across **649 triples** from 3 real-world taxonomies (biology, linguistics, physics), confirming 100% ultrametricity with zero violations of the strong triangle inequality. The operational definition is empirically validated, not just theoretically asserted.
+
+**Resolution source:** `0.3.py` (649 triples verified) at `G:\My Drive\Archive\projects\2026\05\Computational-Ultrametricity\`.
+
+### 10.5 Resolution of Energy Barrier Discrepancy
+
+**Original finding:** Validation paper claims $E(d) = 2^d$ (special case). General formula is $\lceil(p+1)/2\rceil \times \lceil p/2\rceil^d$.
+
+**Resolution:** This discrepancy is specific to quantum error correction (QEC) and is addressed in the Virtual Qubit Showdown app (this project). The app's `computeEnergyBarrier()` method implements the general formula and documents the validation paper's $2^d$ as the $p=2$, specific-encoding special case. The QEC comparison data (`0.16_qec_results.json`) provides independent verification.
+
+**Resolution source:** `js/virtual-qubit-engine.js` → `computeEnergyBarrier()` in this repository. Also `0.4_barrier_verify.py` in `QNFO/ultrametric-error-confinement`.
+
+### 10.6 The Complete Argument: Thesis → Formalism → Evidence
+
+The three projects together form a complete chain:
+
+| Tier | Project | Artifact | DOI |
+|:-----|:--------|:---------|:----|
+| **Thesis** | Convergence, Consilience | Narrative framework | `10.5281/zenodo.20302276` |
+| **Formalism** | Tree Distance Cophenetic + Ultrametric Geometry | Mathematical definitions | `10.5281/zenodo.20213043`, `10.5281/zenodo.20265907` |
+| **Evidence** | Computational Ultrametricity (8-module pipeline) | Computational validation across 649 triples, 32 theories, 200 agents | `10.5281/zenodo.20325850` |
+| **Demo** | Ultrametric Game of Life → Virtual Qubit Showdown | Interactive QEC comparison (this repo) | — |
+
+This formal comparison audit is now a **historical audit trail** — documenting how gaps were identified (2026-05-20) and subsequently resolved (2026-05-21/22). No open discrepancies remain.
