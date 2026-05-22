@@ -77,21 +77,13 @@ class BruhatTitsEncoder {
     get numVirtualQubits() { return this.allNodes.length - this.leaves.length; }
     get numTotalQubits() { return this.allNodes.length; }
 
-    /** Encode a logical value (0 or 1) across all physical qubits (leaves) */
+    /** Encode a logical value (0 or 1) across ALL nodes — paper Section 3.2 */
     encode(logicalValue) {
-        for (const leaf of this.leaves) {
-            leaf.value = logicalValue;
-            leaf.original = logicalValue;
-            leaf.error = false;
-            leaf.propagationFlash = 0;
-        }
         for (const node of this.allNodes) {
-            if (!node.isLeaf) {
-                node.value = 0;
-                node.original = 0;
-                node.error = false;
-                node.propagationFlash = 0;
-            }
+            node.value = logicalValue;
+            node.original = logicalValue;
+            node.error = false;
+            node.propagationFlash = 0;
         }
     }
 
