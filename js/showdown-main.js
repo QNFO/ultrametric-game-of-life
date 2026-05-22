@@ -93,7 +93,6 @@
 
     // ============== ACTIONS ==============
     function doEncode() {
-        resetResults();
         logicalValue = Math.random() < 0.5 ? 0 : 1;
         tree.encode(logicalValue);
         grid.encode(logicalValue);
@@ -157,6 +156,7 @@
         updateLogicalDisplay(treeResult.logicalValue, gridResult.logicalValue,
             treeResult.logicalError, gridResult.logicalError);
         updateComparisonDisplay();
+        document.getElementById('results-content').innerHTML = generateResultsHTML();
         flashMsg(`🧪 Trial complete · Tree flip: ${treeResult.flipped.length}, Grid flip: ${gridResult.flipped.length} · Tree LER: ${treeResult.logicalError ? 'ERROR' : 'OK'}`, treeResult.logicalError ? 'error' : 'info');
     }
 
