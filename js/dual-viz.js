@@ -45,18 +45,30 @@ class DualVisualizer {
     // ============== TREE RENDERING ==============
 
     _buildTreeHierarchy(node) {
-        const obj = { data: node, children: [] };
+        // Build a flat object where D3's .data will point to node properties directly.
+        // Evaluate getters (isLeaf, isRoot, depth) at build time so D3 can read them.
+        const result = {
+            value: node.value,
+            id: node.id,
+            index: node.index,
+            isLeaf: node.isLeaf,
+            isRoot: node.isRoot,
+            depth: node.depth,
+            error: node.error || false,
+            propagationFlash: node.propagationFlash || 0,
+            children: []
+        };
         for (const child of node.children) {
-            obj.children.push(this._buildTreeHierarchy(child));
+            result.children.push(this._buildTreeHierarchy(child));
         }
-        return d3.hierarchy(obj);
+        return result;
     }
 
     renderTree() {
         // Decay animation counters
         this.tree.tickAnimations();
 
-        const root = this._buildTreeHierarchy(this.tree.root);
+        const root = d3.hierarchy(this._buildTreeHierarchy(this.tree.root));
         this.treeLayout(root);
 
         const descendants = root.descendants();
