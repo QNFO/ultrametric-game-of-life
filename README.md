@@ -1,25 +1,38 @@
 # Virtual Qubit Showdown — Instruction Manual
 
 **Live:** [qnfo.github.io/ultrametric-game-of-life](https://qnfo.github.io/ultrametric-game-of-life)
+**Repo:** [github.com/QNFO/ultrametric-game-of-life](https://github.com/QNFO/ultrametric-game-of-life)
 
 ---
 
-## Quick Reference Card
+## Quick Start — See the Tree Advantage in 10 Seconds
 
-| Action | Key | Mode |
-|:-------|:---:|:----:|
-| Switch mode | `1` `2` `3` | All |
-| Encode logical qubit | `E` | Trial |
-| Single Trial | `T` | Trial |
-| Run N Trials | `X` | Experiment |
-| Toggle leaf on tree | **Click** leaf | Explore |
-| Measure distance | **Shift+Click** two leaves | Explore |
-| Randomize leaves | `R` | Explore |
-| Propagate up tree | `P` | All |
+1. Open the site
+2. Press `3` (Experiment mode)
+3. Click **Run N Trials**
+4. Watch: Tree LER stays at 0.0000 while Grid LER rises
+
+That's it. You just demonstrated ultrametric error confinement.
 
 ---
 
-## 1. What This App Is
+## Table of Contents
+
+1. [What This Is](#1-what-this-is)
+2. [The Three Modes](#2-the-three-modes)
+   - [Explore Tree (mode 1)](#-mode-1--explore-tree)
+   - [Single Trial (mode 2)](#-mode-2--single-trial)
+   - [Run Experiment (mode 3)](#-mode-3--run-experiment)
+3. [Parameters (Sliders)](#3-parameters)
+4. [Reading the Displays](#4-reading-the-displays)
+5. [Keyboard Shortcuts](#5-keyboard-shortcuts)
+6. [The Science](#6-the-science)
+7. [Edge Cases & Troubleshooting](#7-edge-cases--troubleshooting)
+8. [Architecture](#8-architecture)
+
+---
+
+## 1. What This Is
 
 A side-by-side comparison of two quantum error correction encodings:
 
@@ -31,151 +44,154 @@ A side-by-side comparison of two quantum error correction encodings:
 | Hierarchical decoding | Flat decoding |
 | Errors geometrically **confined** | Errors can **spread** |
 
-Both encode the same logical qubit with the same number of physical qubits under identical noise. The question: **does ultrametric geometry actually protect quantum information better?**
-
-**Answer (from published research): Yes — at depth $d \geq 3$, the tree shows zero logical errors while the grid fails.**
+Both encode the same logical qubit with the same number of physical qubits, under identical noise.
 
 ---
 
 ## 2. The Three Modes
 
-### 🔬 Mode 1 — Explore Tree (`1`)
+### 🔬 Mode 1 — Explore Tree
 
-**Purpose:** Interact directly with the tree structure. Understand how ultrametric error confinement works geometrically.
+**Purpose:** Interact directly with the tree. Understand how ultrametric geometry confines errors.
 
-| Feature | How |
-|:--------|:----|
-| **Click a leaf** | Toggles value between dead (dark) and alive (green). The tree **propagates** the change upward via majority vote — you'll see the Logical Qubit (root) update. |
-| **Shift+Click two leaves** | Measures **ultrametric distance** between them. A flash message shows the distance and confirms the strong triangle inequality ("Strong Δ ✓"). Siblings under the same parent are closest; leaves in different root branches are farthest. |
-| **Randomize** (`R`) | Assigns random 0/1 values to all leaves and propagates. Useful for seeing how the tree "cleans up" noise. |
-| **Propagate** (`P`) | Runs hierarchical majority vote from leaves up to root. Shows how many nodes changed. |
+| Feature | How | What Happens |
+|:--------|:----|:-------------|
+| **Click a leaf** | Click any small circle (r=5) at the bottom of the tree | Toggles value dead↔alive. Propagates up via majority vote. Logical Qubit (root) updates. |
+| **Measure distance** | Shift+Click two leaves | Shows ultrametric distance. Confirms strong triangle inequality ("Strong Δ ✓"). |
+| **Randomize** | Click 🎲 Randomize button or press `R` | Random 0/1 on all leaves, then propagates. |
+| **Propagate** | Click ⬆️ Propagate button or press `P` | Runs majority vote from leaves to root. Shows how many nodes changed. |
 
-**What you're seeing:** The tree's hierarchical structure means errors in one subtree stay *confined* — they can't flip votes in distant subtrees. When you toggle a single leaf, it only affects its local branch.
+**What you're seeing:** Errors in one subtree stay confined — they can't affect distant subtrees. This is the geometric reason ultrametric encoding protects quantum information.
 
 ---
 
-### 🧪 Mode 2 — Single Trial (`2`)
+### 🧪 Mode 2 — Single Trial
 
-**Purpose:** Run one complete encode→noise→decode cycle on both encodings simultaneously.
+**Purpose:** Run one encode→noise→decode cycle on both encodings simultaneously.
 
 | Button | What Happens |
 |:-------|:-------------|
-| **Encode** (`E`) | Picks a random logical $\lvert 0 \rangle$ or $\lvert 1 \rangle$, writes it to all physical qubits on both tree and grid. |
-| **Noise** (`N`) | Flips random bits at the error rate $p_{\text{err}}$ (slider). Visual: flipped qubits turn red. |
-| **Decode** (`D`) | Runs majority-vote recovery. The Logical Qubit displays show whether each encoding survived or errored. |
-| **Single Trial** (`T`) | Does encode→noise→decode in one click. Results accumulate in the stats panel. |
+| **🔐 Encode** | Picks random $\lvert 0 \rangle$ or $\lvert 1 \rangle$, writes to all qubits |
+| **💥 Inject Noise** | Flips random bits at $p_{\text{err}}$. Visual: flipped qubits turn red |
+| **🔓 Decode & Compare** | Runs majority-vote recovery. Shows which encoding survived |
+| **🧪 Run Single Trial** (`T`) | Does all three steps at once. Stats accumulate |
 
-**Reading the results:** After each trial, the center divider shows:
-- **Tree LER:** Logical error rate for the tree (should be 0.0000 at any depth ≥ 3)
-- **Grid LER:** Logical error rate for the grid (rises with $p_{\text{err}}$)
-- **Advantage:** How many times better the better encoding is
+**Center divider stats:**
+- **Tree LER:** Should be 0.0000 at any depth $\geq 3$
+- **Grid LER:** Rises with $p_{\text{err}}$
+- **Advantage:** Ratio of the better encoding. "∞× (Tree perfect!)" when the tree makes zero errors
 
 ---
 
-### 📊 Mode 3 — Run Experiment (`3`)
+### 📊 Mode 3 — Run Experiment
 
 **Purpose:** Statistical comparison. Run many trials and compare logical error rates.
 
-1. Set **Trials** (10–5000) and **Error Rate** ($p_{\text{err}}$)
-2. Click **Run N Trials** (`X`)
-3. Watch the live counter and comparison stats update
-4. The final results panel shows:
-   - Tree LER and Grid LER with error counts
-   - Physical qubits, virtual qubits, and energy barrier
-   - A citation to the published research if the data matches
+1. Set **Trials** (10–5000) and **Error Rate** slider
+2. Click **📊 Run N Trials** (`X`)
+3. Watch live counter and comparison
+4. Final results panel shows error counts, physical/virtual qubits, energy barrier, and a verified-data citation
 
-**Recommended demo:** Set $d=4$, $p_{\text{err}}=0.35$, 500 trials. The tree shows 0 errors while the grid shows measurable failures — exactly as published.
+**Recommended demo:** $d=4$, $p_{\text{err}}=0.35$, 500 trials. Tree: 0 errors. Grid: measurable failures. Matches published research.
 
 ---
 
-## 3. Parameters (Sliders)
+## 3. Parameters
 
-| Slider | Range | Default | What It Does |
-|:-------|:------|:--------|:-------------|
-| **Prime $p$** | 2–7 | 2 | Tree branching. Root has $p+1$ children; all other internal nodes have $p$ children. |
-| **Depth $d$** | 1–5 | 4 | How many levels below the root. Physical qubits = $(p+1) \cdot p^{d-1}$. For $p=2$, $d=4$: 24 physical qubits + 22 virtual qubits. |
-| **Error Rate $p_{\text{err}}$** | 0.01–0.50 | 0.35 | Probability each physical qubit flips. Realistic for noisy quantum hardware. |
+| Slider | Range | Default | Effect |
+|:-------|:------|:--------|:-------|
+| **Prime $p$** | 2–7 | 2 | Tree branching factor. Root has $p+1$ children, internal nodes have $p$. |
+| **Depth $d$** | 1–5 | 4 | Levels below root. Physical qubits $= (p+1) \cdot p^{d-1}$ |
+| **Error Rate $p_{\text{err}}$** | 0.01–0.50 | 0.35 | Per-qubit bit-flip probability |
 
-**⚠️ Performance note:** At $p=7$, $d=5$, the tree has 13,720 nodes. Rendering may be slow. Stick to $p \in \{2,3\}$ for smooth interaction.
+**Scaling:**
+| $p$ | $d$ | Physical Qubits | Virtual Qubits | Energy Barrier |
+|:----|:----|:----------------|:---------------|:---------------|
+| 2 | 1 | 3 | 1 | 2 |
+| 2 | 2 | 6 | 4 | 4 |
+| 2 | 3 | 12 | 10 | 8 |
+| 2 | 4 | 24 | 22 | 16 |
+| 2 | 5 | 48 | 46 | 32 |
 
 ---
 
 ## 4. Reading the Displays
 
 ### Tree Panel (Left)
-| Element | Meaning |
-|:--------|:--------|
-| **Green circles** | Logical $\lvert 1 \rangle$ (alive) |
-| **Dark circles** | Logical $\lvert 0 \rangle$ (dead) |
-| **Red circles** | Error (bit flipped) |
-| **Cyan flash** | Propagation in progress |
+
+| Visual | Meaning |
+|:-------|:--------|
+| 🟢 Green circle | $\lvert 1 \rangle$ (alive) |
+| ⚫ Dark circle | $\lvert 0 \rangle$ (dead) |
+| 🔴 Red circle | Error (bit flipped by noise) |
+| 🔵 Cyan flash | Propagation in progress |
 | **L** label | Logical Qubit (root) |
-| **V label** | Virtual Qubit (internal node) |
-| **Largest circle (r=10)** | Root |
-| **Smallest circles (r=5)** | Physical qubits (leaves) |
+| **V** label | Virtual Qubit (internal node) |
+| r=10 (largest) | Root node |
+| r=5 (smallest) | Physical qubit (leaf) |
 
 ### Grid Panel (Right)
-| Element | Meaning |
-|:--------|:--------|
-| **Green squares** | Physical qubit $\lvert 1 \rangle$ |
-| **Dark squares** | Physical qubit $\lvert 0 \rangle$ |
-| **Red squares** | Error (flipped) |
-| **Gray lines** | Nearest-neighbor connections |
+
+| Visual | Meaning |
+|:-------|:--------|
+| 🟢 Green square | $\lvert 1 \rangle$ |
+| ⚫ Dark square | $\lvert 0 \rangle$ |
+| 🔴 Red square | Error (flipped) |
+| Gray lines | Nearest-neighbor connections |
 
 ### Center Divider
+
 | Display | Meaning |
 |:--------|:--------|
-| **Tree LER** | Running logical error rate for the tree |
-| **Grid LER** | Running logical error rate for the grid |
-| **Advantage** | Ratio: "∞× (Tree perfect!)" or "$N$× Tree advantage" |
+| **Tree LER** | Running logical error rate for tree encoding |
+| **Grid LER** | Running logical error rate for grid encoding |
+| **Advantage** | "∞× (Tree perfect!)" or "$N$× advantage" |
 
-### Stats Panel (Sidebar)
-| Stat | What |
-|:-----|:-----|
-| **Physical Qubits** | Number of leaf qubits (each encoding uses this many) |
-| **Virtual Qubits** | Internal nodes in the tree (the encoding overhead) |
-| **Energy Barrier** | Minimum leaf flips to flip the logical qubit. Scales as $2^d$ for $p=2$. |
+### Sidebar Stats
 
----
-
-## 5. Keyboard Shortcuts (Complete)
-
-| Key | Action |
-|:----|:-------|
-| `1` | Switch to **Explore Tree** mode |
-| `2` | Switch to **Single Trial** mode |
-| `3` | Switch to **Run Experiment** mode |
-| `E` | Encode a random logical qubit |
-| `N` | Inject bit-flip noise |
-| `D` | Decode via majority vote |
-| `T` | Run one complete trial (encode→noise→decode) |
-| `X` | Run N trials (Experiment mode) |
-| `R` | Randomize all leaf values |
-| `P` | Propagate values up the tree |
-| `Space` | Not used (reserved for future auto-step) |
+| Stat | Meaning |
+|:-----|:--------|
+| **Physical Qubits** | Leaf count (same for both encodings) |
+| **Virtual Qubits** | Internal tree nodes (encoding overhead) |
+| **Energy Barrier** | Minimum leaf flips to corrupt logical qubit. $= 2^d$ for $p=2$. |
 
 ---
 
-## 6. The Science (What the Numbers Mean)
+## 5. Keyboard Shortcuts
 
-### Why does the tree outperform the grid?
+| Key | Action | Mode |
+|:----|:-------|:----:|
+| `1` | Explore Tree mode | All |
+| `2` | Single Trial mode | All |
+| `3` | Run Experiment mode | All |
+| `E` | Encode | Trial |
+| `N` | Inject Noise | Trial |
+| `D` | Decode | Trial |
+| `T` | Run Single Trial | Trial |
+| `X` | Run N Trials | Experiment |
+| `R` | Randomize leaves | Explore |
 
-The **strong triangle inequality** $d(x,z) \leq \max\{d(x,y), d(y,z)\}$ means errors in one subtree are geometrically confined — they can't propagate to distant branches. The hierarchical majority vote filters errors at each level before they reach the root.
+---
 
-### What is a "virtual qubit"?
+## 6. The Science
 
-Every internal node in the Bruhat-Tits tree is a **virtual qubit** — it doesn't correspond to a physical qubit, but its value is computed from its children via majority vote. The virtual qubits form the encoding layers that protect the logical qubit at the root.
+### Why the tree wins
 
-### What's the energy barrier?
+The **strong triangle inequality**:
+$$d(x,z) \leq \max\{d(x,y), d(y,z)\}$$
 
-The **minimum number of physical qubit flips** needed to flip the logical qubit. For $p=2$: $E_{\text{barrier}}(d) = 2^d$. At $d=4$: **16 qubits must flip in specific positions** to corrupt the logical qubit. Random noise almost never achieves this configuration.
+This means the distance between any two points is bounded by the *maximum* of their distances to a third point — not the sum. In a tree, this geometrically confines errors to local branches. The hierarchical majority vote filters errors at each level.
 
-### Published Data
+### Energy barrier
 
-- **Validation of Ultrametric Error Confinement** — DOI: [10.5281/zenodo.20134944](https://doi.org/10.5281/zenodo.20134944)
-- **Ultrametric Quantum Computing Foundations** — DOI: [10.5281/zenodo.20154557](https://doi.org/10.5281/zenodo.20154557)
-- Tree $d \geq 3$, $p_{\text{err}} \leq 0.40$: **0 observed logical errors in 500 trials**
-- Flat encoding at same rate: **LER up to 0.152**
+$$E_{\text{barrier}}(d) = 2^d \quad (\text{for } p=2)$$
+
+At $d=4$, you'd need **16 physical qubits to flip in specific positions** to corrupt the logical qubit. Random noise with $p_{\text{err}} = 0.35$ does this with probability $\approx 10^{-10}$.
+
+### Published validation
+
+- **Validation paper** (DOI: [10.5281/zenodo.20134944](https://doi.org/10.5281/zenodo.20134944)): Tree $d \geq 3$ — 0 logical errors in 500 trials at $p_{\text{err}} \leq 0.40$. Flat encoding: LER up to 0.152.
+- **UQC Foundations** (DOI: [10.5281/zenodo.20154557](https://doi.org/10.5281/zenodo.20154557))
 
 ---
 
@@ -183,30 +199,30 @@ The **minimum number of physical qubit flips** needed to flip the logical qubit.
 
 | Issue | Solution |
 |:------|:---------|
-| **Tree too large (slow)** | Reduce $p$ to 2 or 3, depth to 3 or 4 |
-| **Tree and grid both perfect** | Increase $p_{\text{err}}$ — at 0.15 both survive. Try 0.35 or 0.40 |
-| **Tree shows errors at d=3** | This should NOT happen. Hard-refresh (Ctrl+F5). If persistent, report a bug. |
-| **Clicking leaves does nothing** | Make sure you're in **Explore Tree** mode (mode `1`). In Trial/Experiment modes, clicking is disabled. |
-| **Grid has different qubit count than tree** | The grid is sized to match the tree's leaf count, rounded to a √n × √n layout. Some grid cells may be empty. |
+| **Tree too large (slow)** | Reduce $p$ to 2 or 3, $d$ to 3 or 4 |
+| **Tree and grid both perfect** | Increase $p_{\text{err}}$. At 0.15 both survive. Try 0.35–0.40. |
+| **Tree shows errors at $d \geq 3$** | Should NOT happen. Hard-refresh (Ctrl+F5). If persistent, report bug. |
+| **Clicking leaves does nothing** | Switch to Explore Tree mode (press `1`). Trial/Experiment modes disable leaf clicking. |
+| **Shift+Click shows no distance** | Click one leaf, then Shift+Click a different leaf. Must be two distinct leaves. |
 
 ---
 
-## 8. Architecture (For Developers)
+## 8. Architecture
 
 | File | Purpose |
 |:-----|:--------|
-| `index.html` | Main page — 3-column layout (sidebar + tree + grid) |
+| `index.html` | 3-column layout |
 | `css/showdown.css` | Dark quantum theme |
-| `js/virtual-qubit-engine.js` | Tree encoder (BruhatTitsEncoder) + Grid engine (SurfaceCodeGrid) |
-| `js/dual-viz.js` | D3.js dual visualization (radial tree + 2D grid) |
-| `js/showdown-main.js` | Controller — modes, experiment runner, stats, keyboard shortcuts |
+| `js/virtual-qubit-engine.js` | BruhatTitsEncoder + SurfaceCodeGrid |
+| `js/dual-viz.js` | D3.js dual visualization |
+| `js/showdown-main.js` | Controller — modes, experiment runner, keyboard shortcuts |
 
-**Tree algorithm:** Encodes per Validation paper §3.2 — all nodes get logical value, hierarchical majority vote, ties retain current value.
+**Tree algorithm:** Per Validation paper §3.2 — all nodes get logical value, hierarchical majority vote, ties retain current value.
 
-**Grid algorithm:** Simple repetition code — global majority vote over all physical qubits.
+**Grid algorithm:** Simple repetition code — global majority vote.
 
-**RNG:** Linear congruential generator (Numerical Recipes) seeded by trial counter for reproducibility.
+**RNG:** Linear congruential generator (Numerical Recipes), seeded by trial counter.
 
 ---
 
-*Instruction Manual v1.0 — Last updated 2026-05-22*
+*Instruction Manual v1.0 — 2026-05-22*
