@@ -304,7 +304,23 @@
     }
 
     function updateInfoPanel(node) {
-        // Could populate info panel with node details
+        if (!node) {
+            document.getElementById('node-info').innerHTML =
+                '<span class="dim-text">Click a node to inspect it</span>';
+            return;
+        }
+        const isTree = node.hasOwnProperty('children');
+        const kind = isTree ?
+            (node.isRoot ? 'Root (Logical Qubit)' : node.isLeaf ? 'Leaf (Physical Qubit)' : `Virtual Qubit (depth ${node.depth})`) :
+            `Grid Qubit (${node.x},${node.y})`;
+        const val = node.value === 1 ? '<span style="color:#10b981">Alive |1⟩</span>' :
+            '<span style="color:#94a3b8">Dead |0⟩</span>';
+        document.getElementById('node-info').innerHTML = `
+            <span class="highlight">${kind}</span><br>
+            Index: ${node.index}<br>
+            Value: ${val}
+            ${isTree && !node.isLeaf ? `<br>Children: ${node.children.length}` : ''}
+        `;
     }
 
     function resetResults() {

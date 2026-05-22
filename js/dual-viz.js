@@ -143,6 +143,7 @@ class DualVisualizer {
     _onTreeClick(event, d) {
         const node = d.data;
         if (event.shiftKey && node.isLeaf) {
+            // Shift+Click: measure ultrametric distance
             if (this.distanceNode && this.distanceNode !== node) {
                 const dist = this.tree.ultrametricDistance(this.distanceNode, node);
                 if (this.cb.onDistance) this.cb.onDistance(this.distanceNode, node, dist);
@@ -150,7 +151,15 @@ class DualVisualizer {
             } else {
                 this.distanceNode = node;
             }
+        } else if (node.isLeaf) {
+            // Normal click on leaf: toggle value and propagate up
+            node.value = 1 - node.value;
+            node.error = false;
+            this.tree.decode();
+            this.selectedTreeNode = node;
+            if (this.cb.onTreeSelect) this.cb.onTreeSelect(node);
         } else {
+            // Click on internal node: select and show info
             this.selectedTreeNode = node;
             if (this.cb.onTreeSelect) this.cb.onTreeSelect(node);
         }
