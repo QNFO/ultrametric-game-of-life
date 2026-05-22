@@ -309,17 +309,18 @@
                 '<span class="dim-text">Click a node to inspect it</span>';
             return;
         }
-        const isTree = node.hasOwnProperty('children');
-        const kind = isTree ?
-            (node.isRoot ? 'Root (Logical Qubit)' : node.isLeaf ? 'Leaf (Physical Qubit)' : `Virtual Qubit (depth ${node.depth})`) :
-            `Grid Qubit (${node.x},${node.y})`;
-        const val = node.value === 1 ? '<span style="color:#10b981">Alive |1⟩</span>' :
+        const isGridQubit = node.hasOwnProperty('x') && node.hasOwnProperty('y');
+        const isD3Node = node.hasOwnProperty('_isLeaf') || node.hasOwnProperty('height');
+        const kind = isGridQubit ?
+            `Grid Qubit (${node.x},${node.y})` :
+            (isD3Node ? (node._isRoot ? 'Root (Logical Qubit)' : (node.height === 0 ? 'Leaf (Physical Qubit)' : `Virtual Qubit (depth ${node.depth})`)) :
+            (node.isRoot ? 'Root (Logical Qubit)' : node.isLeaf ? 'Leaf (Physical Qubit)' : `Virtual Qubit (depth ${node.depth})`));
+        const val = (isD3Node ? node._value : node.value) === 1 ? '<span style="color:#10b981">Alive |1⟩</span>' :
             '<span style="color:#94a3b8">Dead |0⟩</span>';
         document.getElementById('node-info').innerHTML = `
             <span class="highlight">${kind}</span><br>
-            Index: ${node.index}<br>
+            Index: ${isD3Node ? (node._index ?? '') : node.index}<br>
             Value: ${val}
-            ${isTree && !node.isLeaf ? `<br>Children: ${node.children.length}` : ''}
         `;
     }
 

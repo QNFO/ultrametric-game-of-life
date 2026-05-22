@@ -64,12 +64,45 @@ class DualVisualizer {
         return result;
     }
 
+    _syncNodeProps(root) {
+        // Attach VirtualQubitNode properties directly to D3 nodes
+        // so all rendering/click code uses d._value, d._error, etc.
+        const vnLeaves = this.tree.leaves;
+        const d3Leaves = root.leaves();
+        d3Leaves.forEach((d, i) => {
+            if (i < vnLeaves.length) {
+                const vn = vnLeaves[i];
+                d._value = vn.value;
+                d._error = vn.error;
+                d._propFlash = vn.propagationFlash;
+                d._id = vn.id;
+                d._index = vn.index;
+            }
+        });
+        // Internal nodes: propagate _value up
+        root.each(d => {
+            if (d.height > 0) {
+                const children = d.children || [];
+                const ones = children.reduce((s, c) => s + (c._value || 0), 0);
+                d._value = ones > children.length / 2 ? 1 : 0;
+            }
+            d._isLeaf = d.height === 0;
+            d._isRoot = d.depth === 0;
+            d._error = d._error || false;
+            d._propFlash = d._propFlash || 0;
+            d._selected = (d === this.selectedTreeNode);
+        });
+    }
+
     renderTree() {
         // Decay animation counters
         this.tree.tickAnimations();
 
         const root = d3.hierarchy(this._buildTreeHierarchy(this.tree.root));
         this.treeLayout(root);
+        
+        // Sync VN properties onto D3 nodes
+        this._syncNodeProps(root);
 
         const descendants = root.descendants();
         const xs = descendants.map(d => d.x);
@@ -85,7 +118,7 @@ class DualVisualizer {
 
         // Edges
         const links = root.links();
-        this.treeG.selectAll('line.tree-edge').data(links, d => d.target.data.id).join(
+        this.treeG.selectAll('line.tree-edge').data(links, d => d.target._id || d.target.data?.id).join(
             enter => enter.append('line').attr('class', 'tree-edge'),
             update => update,
             exit => exit.remove()
@@ -96,7 +129,7 @@ class DualVisualizer {
         .attr('y2', d => scaleY(d.target.y));
 
         // Nodes
-        const nodeGroups = this.treeG.selectAll('g.tree-node').data(descendants, d => d.data.id).join(
+        const nodeGroups = this.treeG.selectAll('g.tree-node').data(descendants, d => d._id || d.data?.id).join(
             enter => {
                 const g = enter.append('g').attr('class', 'tree-node');
                 g.append('circle').attr('class', 'tcircle');
@@ -110,23 +143,23 @@ class DualVisualizer {
         nodeGroups.attr('transform', d => `translate(${scaleX(d.x)},${scaleY(d.y)})`);
 
         nodeGroups.select('circle.tcircle')
-            .attr('r', d => d.data.isLeaf ? 5 : d.data.isRoot ? 10 : 7 - d.data.depth * 0.3)
-            .attr('fill', d => this._treeColor(d.data))
+            .attr('r', d => d.height === 0 ? 5 : d.depth === 0 ? 10 : 7 - d.depth * 0.3)
+            .attr('fill', d => this._treeColor(d))
             .attr('stroke', d => {
-                if (d.data.error) return '#ef4444';
-                if (d.data.propagationFlash > 0) return '#22d3ee';
-                if (d.data === this.selectedTreeNode) return '#f472b6';
+                if (d._error) return '#ef4444';
+                if (d._propFlash > 0) return '#22d3ee';
+                if (d._selected) return '#f472b6';
                 return '#334155';
             })
             .attr('stroke-width', d => {
-                if (d.data.error || d.data.propagationFlash > 0) return 3;
-                if (d.data === this.selectedTreeNode) return 3;
+                if (d._error || d._propFlash > 0) return 3;
+                if (d._selected) return 3;
                 return 1.5;
             })
             .attr('class', d => {
                 let cls = 'tcircle';
-                if (d.data.error) cls += ' error-flash';
-                if (d.data.propagationFlash > 0) cls += ' propagate-flash';
+                if (d._error) cls += ' error-flash';
+                if (d._propFlash > 0) cls += ' propagate-flash';
                 return cls;
             })
             .on('click', (event, d) => this._onTreeClick(event, d))
@@ -135,57 +168,71 @@ class DualVisualizer {
 
         nodeGroups.select('text.tlabel')
             .text(d => {
-                if (d.data.isRoot) return 'L';
-                if (d.data.depth === 1) return 'V' + d.data.index;
+                if (d._isRoot) return 'L';
+                if (d.depth === 1) return 'V' + (d._index || '');
                 return '';
             })
-            .attr('dy', d => d.data.isRoot ? -14 : 14)
+            .attr('dy', d => d._isRoot ? -14 : 14)
             .attr('text-anchor', 'middle')
             .attr('fill', '#64748b')
             .attr('font-size', '9px');
     }
 
-    _treeColor(node) {
-        if (node.error) return '#ef4444';
-        if (node.propagationFlash > 0) return '#22d3ee';
-        if (node.value === 1) return '#10b981';
+    _treeColor(d) {
+        if (d._error) return '#ef4444';
+        if (d._propFlash > 0) return '#22d3ee';
+        if (d._value === 1) return '#10b981';
         return '#1e293b';
     }
 
     _onTreeClick(event, d) {
-        const node = d.data;
-        if (event.shiftKey && node.isLeaf) {
-            // Shift+Click: measure ultrametric distance
-            if (this.distanceNode && this.distanceNode !== node) {
-                const dist = this.tree.ultrametricDistance(this.distanceNode, node);
-                if (this.cb.onDistance) this.cb.onDistance(this.distanceNode, node, dist);
+        if (event.shiftKey && d.height === 0) {
+            // Shift+Click on leaf: measure ultrametric distance
+            if (this.distanceNode && this.distanceNode !== d) {
+                const a = this.tree.leaves[this._d3LeafIndex(this.distanceNode)];
+                const b = this.tree.leaves[this._d3LeafIndex(d)];
+                if (a && b) {
+                    const dist = this.tree.ultrametricDistance(a, b);
+                    if (this.cb.onDistance) this.cb.onDistance(a, b, dist);
+                }
                 this.distanceNode = null;
             } else {
-                this.distanceNode = node;
+                this.distanceNode = d;
             }
-        } else if (node.isLeaf) {
-            // Normal click on leaf: toggle value and propagate up
-            node.value = 1 - node.value;
-            node.error = false;
-            this.tree.decode();
-            this.selectedTreeNode = node;
-            if (this.cb.onTreeSelect) this.cb.onTreeSelect(node);
+        } else if (d.height === 0) {
+            // Normal click on leaf: toggle value and propagate
+            const idx = this._d3LeafIndex(d);
+            if (idx >= 0 && idx < this.tree.leaves.length) {
+                const vn = this.tree.leaves[idx];
+                vn.value = 1 - vn.value;
+                vn.error = false;
+                this.tree.decode();
+                this._syncNodeProps();
+            }
+            this.selectedTreeNode = d;
+            if (this.cb.onTreeSelect) this.cb.onTreeSelect(d);
         } else {
-            // Click on internal node: select and show info
-            this.selectedTreeNode = node;
-            if (this.cb.onTreeSelect) this.cb.onTreeSelect(node);
+            // Internal node: select and show info
+            this.selectedTreeNode = d;
+            if (this.cb.onTreeSelect) this.cb.onTreeSelect(d);
         }
         this.renderTree();
     }
 
+    _d3LeafIndex(d3Node) {
+        // Find which leaf index this D3 node corresponds to
+        let root = d3Node;
+        while (root.parent) root = root.parent;
+        const leaves = root.leaves();
+        return leaves.indexOf(d3Node);
+    }
+
     _onTreeHover(event, d) {
-        const node = d.data;
-        const kind = node.isRoot ? 'Logical Qubit (Root)' :
-            node.isLeaf ? 'Physical Qubit (Leaf)' : `Virtual Qubit (depth ${node.depth})`;
+        const kind = d._isRoot ? 'Logical Qubit (Root)' :
+            (d.height === 0 ? 'Physical Qubit (Leaf)' : `Virtual Qubit (depth ${d.depth})`);
         let html = `<div class="tt-title">🌳 ${kind}</div>`;
-        html += `<div>ID: ${node.id} | Value: <span style="color:${node.value === 1 ? '#10b981' : '#94a3b8'}">${node.value}</span></div>`;
-        if (node.error) html += `<div style="color:#ef4444">⚠️ ERROR: Value flipped!</div>`;
-        if (node.propagationFlash > 0) html += `<div style="color:#22d3ee">⚡ Propagation in progress</div>`;
+        html += `<div>${d._id || ''} | Value: <span style="color:${d._value === 1 ? '#10b981' : '#94a3b8'}">${d._value === 1 ? '1' : '0'}</span></div>`;
+        if (d._error) html += `<div style="color:#ef4444">⚠️ ERROR: Value flipped!</div>`;
         this.tooltip.html(html)
             .style('left', (event.pageX + 12) + 'px')
             .style('top', (event.pageY - 12) + 'px')
