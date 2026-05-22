@@ -114,16 +114,20 @@ class BruhatTitsEncoder {
                 if (node.depth !== d || node.isLeaf) continue;
                 const ones = node.children.reduce((s, c) => s + c.value, 0);
                 const zeros = node.children.length - ones;
-                let newVal;
-                if (ones > zeros) newVal = 1;
-                else if (zeros > ones) newVal = 0;
-                else newVal = tieBreaker;
-
-                if (node.value !== newVal) {
-                    node.value = newVal;
-                    node.propagationFlash = 3;
-                    changed.push(node);
+                if (ones > zeros) {
+                    if (node.value !== 1) {
+                        node.value = 1;
+                        node.propagationFlash = 3;
+                        changed.push(node);
+                    }
+                } else if (zeros > ones) {
+                    if (node.value !== 0) {
+                        node.value = 0;
+                        node.propagationFlash = 3;
+                        changed.push(node);
+                    }
                 }
+                // else: tie — retain current value (paper Section 3.2)
             }
         }
         const logicalError = (this.root.value !== this.leaves[0].original);
