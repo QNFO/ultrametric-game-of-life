@@ -99,7 +99,17 @@
 
         <!-- Legend -->
         <section class="panel">
-            <h3>📋 Legend</h3>
+            <h3>📊 Research Data</h3>
+            <div id="chart-container">
+                <svg id="chart-svg"></svg>
+            </div>
+            <div id="chart-legend" style="font-size:0.6rem;color:var(--text-dim);margin-top:2px">
+                <span style="color:#10b981">━ Tree</span> <span style="color:#ef4444">━ Flat</span><br>
+                <small>Validation paper Table 1 (DOI: 10.5281/zenodo.20134944)</small>
+            </div>
+        </section>
+
+        <!-- Legend -->
             <div class="legend">
                 <div class="leg-item"><span class="dot" style="background:#10b981"></span> Logical |1⟩ (alive)</div>
                 <div class="leg-item"><span class="dot" style="background:#1e293b"></span> Logical |0⟩ (dead)</div>

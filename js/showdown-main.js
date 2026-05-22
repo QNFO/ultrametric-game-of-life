@@ -72,6 +72,12 @@
         updateComparisonDisplay();
         document.getElementById('results-content').innerHTML =
             '<span class="dim-text">Ready. Encode a logical qubit and run trials.</span>';
+
+        // Init paper data chart
+        if (!window._chart) {
+            window._chart = new PaperDataChart('chart-svg');
+        }
+        window._chart.update(getP(), getD(), getErrRate());
     }
 
     function rebuild() {
