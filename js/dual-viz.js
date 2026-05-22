@@ -207,7 +207,6 @@ class DualVisualizer {
                 vn.value = 1 - vn.value;
                 vn.error = false;
                 this.tree.decode();
-                this._syncNodeProps();
             }
             this.selectedTreeNode = d;
             if (this.cb.onTreeSelect) this.cb.onTreeSelect(d);
