@@ -1,25 +1,17 @@
-# BACKLOG — Ultrametric Game of Life → Virtual Qubit Showdown
+# ⚠️ DEPRECATED -- Migrated to GitHub-Native Features
 
-## ✅ Done (was P1)
-- [x] ~~Test all features locally before deployment~~ — Verified. Deployed.
-- [x] ~~Create GitHub repository under QNFO organization~~ — `github.com/QNFO/ultrametric-game-of-life`
-- [x] ~~Deploy to GitHub Pages~~ — `qnfo.github.io/ultrametric-game-of-life`
-- [x] ~~Flat vs. Ultrametric comparison mode~~ — Implemented as Virtual Qubit Showdown (split-screen)
-- [x] ~~Energy barrier visualization~~ — Live display in stats panel
-- [x] ~~Formal comparison audit~~ — `FORMAL-COMPARISON.md` complete, resolution appendix added
+**This file is superseded by GitHub-native project management tools.**
 
-## P2 (Medium Priority)
-- [ ] Ultrametricity index live display (live computation on current tree state)
-- [ ] Pre-loaded comparison data from published experiments (interactive chart)
-- [ ] Export/import tree and grid state (JSON serialization)
-- [ ] Depth vs LER interactive chart (slider changes depth, chart updates)
-- [ ] Animation of propagation step-by-step (slow-mo decode)
-- [ ] Multi-prime comparison (p=2,3,5 side by side in separate columns)
+All QNFO repos now use GitHub-native features for project management:
+- **Wiki** for persistent documentation (charter, learnings, DoD, state)
+- **Issues** for backlog, risks, and tasks with priority labels
+- **Projects** for sprint/kanban tracking
+- **Discussions** for decisions and announcements
+- **Releases** for versioned changelogs
 
-## P3 (Nice to Have)
-- [ ] Mobile touch support improvements (currently desktop-optimized)
-- [ ] Color-blind accessible palette option
-- [ ] Tutorial / guided tour overlay for first-time visitors
-- [ ] Share state via URL hash (bookmark a specific experiment configuration)
-- [ ] `0.2_results.json` and `0.16_qec_results.json` data pre-loaded as interactive scatter plot
-- [ ] Link to "The Tree Is Real" publication page from within the app
+See the [QWAV Wiki](https://github.com/QNFO/QWAV/wiki) for the reference implementation.
+See the [QNFO org Projects](https://github.com/orgs/QNFO/projects) for cross-project tracking.
+
+**This file will not be updated. Do not edit.**
+
+*Migrated 2026-05-24 during org-wide PM file deprecation.*
