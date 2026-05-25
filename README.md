@@ -77,3 +77,7 @@ This project is one leg of a three-part argument:
 ---
 
 **Author:** Rowan Brad Quni-Gudzinas · ORCID: [0009-0002-4317-5604](https://orcid.org/0009-0002-4317-5604)
+
+---
+
+*Part of the [QWAV research program](https://qnfo.github.io/QWAV/) -- Ultrametric Quantum Computing & AI.*
